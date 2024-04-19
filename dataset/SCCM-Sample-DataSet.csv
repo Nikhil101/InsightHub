@@ -1,0 +1,11 @@
+﻿Device,ID,Device,Name,Device,Type,Operating,System,Manufacturer,Model,Serial,Number,Processor,RAM,Storage,Network,Adapter,Software,Installed,Warranty,Expiration,Date,Owner,Country,State,City,Building,Floor
+ABC123,Laptop1,Laptop,Windows,10,Pro,Dell,Latitude,E7450,DELL123456,Intel,Core,i5-5300U,8GB,256GB,SSD,Intel,Ethernet,Connection,I218-LM,2025-06-30,John,Doe,USA,CA,Los,Angeles,Building
+DEF456,Desktop1,Desktop,Windows,11,Enterprise,HP,EliteDesk,800,G5,HP789012,Intel,Core,i7-9700,16GB,512GB,NVMe,SSD,Realtek,PCIe,GbE,Family,Controller,2024-12-31,Jane,Smith,USA,NY
+GHI789,Server1,Server,Windows,Server,2019,Datacenter,Dell,PowerEdge,R740,DELL345678,Intel,Xeon,Gold,6254,64GB,4TB,SAS,HDD,(RAID,5),Broadcom,57416,10GbE,NIC,2025-10-15,N/A,USA
+JKL012,Printer1,Printer,Canon,imageRUNNER,ADVANCE,C5235i,CAN456789,2023-05-20,N/A,USA,IL,Chicago,Office,Tower,10th,,,,,,,,,,,,
+MNO345,Mobile1,Mobile,Device,Android,12,Samsung,Galaxy,S21,Ultra,SAM789012,2024-09-30,Sarah,Lee,USA,CA,San,Francisco,On,the,Go,N/A,,,,,,
+PQR678,Tablet1,Tablet,iOS,15,Apple,iPad,Pro,(2021),APP345678,Apple,A14,Bionic,8GB,128GB,Wi-Fi,"6,",Bluetooth,5.0,"Pages,","Keynote,",Numbers,2023-11-30,Michael,Brown,USA,TX,Dallas
+STU901,Switch1,Network,Switch,Cisco,Catalyst,2960X-48TS-L,CIS901234,Cisco,IOS,15.0,2024-08-15,N/A,USA,WA,Seattle,Data,Center,N/A,,,,,,,,,
+VWX123,Projector1,Projector,Epson,PowerLite,1781W,EPS567890,Epson,iProjection,2023-09-25,N/A,USA,MA,Boston,Conference,Room,5th,,,,,,,,,,,
+YZA456,Security,Camera1,Surveillance,Camera,Hikvision,DS-2CD2043G0-I,HIK123456,Hikvision,iVMS-4200,2025-04-10,N/A,USA,FL,Miami,Lobby,Ground,,,,,,,,,,,
+BCD789,Virtual,Machine1,Virtual,Machine,Windows,Server,2016,VMware,VMWare,Workstation,VMW789012,Microsoft,Office,"365,",Adobe,Creative,Cloud,Administrator,USA,CA,Los,Angeles,Data,Center,N/A,,
