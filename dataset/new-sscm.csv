@@ -1,0 +1,11 @@
+Device ID,Device Name,Device Type,Operating System,Manufacturer,Model,Serial Number,Processor,RAM,Storage,Network Adapter,Software Installed,Warranty Expiration Date,Owner,Location
+ABC123,Laptop1,Laptop,Windows 10,Dell,Latitude E7450,123456789,Intel Core i5,8GB,256GB SSD,Intel Ethernet Connection,Microsoft Office, Adobe Acrobat,01/08/24,John Doe,New York
+DEF456,Desktop1,Desktop,Windows Server 2019,HP,ProDesk 600 G5,987654321,Intel Core i7,16GB,1TB HDD,Realtek PCIe GbE Family Controller,Google Chrome, Mozilla Firefox,15/12/23,Jane Smith,London
+GHI789,Server1,Server,CentOS 8,Supermicro,SuperServer 1029P-WTR,456789123,AMD EPYC 7402P,64GB,4TB HDD,Broadcom NetXtreme GbE,Microsoft SQL Server, Apache Tomcat,20/03/25,Alex Johnson,San Francisco
+JKL012,Laptop2,Laptop,macOS Big Sur,Apple,MacBook Pro 13,654321987,Apple M1,16GB,512GB SSD,Wi-Fi 6,Microsoft Office, Adobe Acrobat,10/10/23,Emily Brown,Sydney
+MNO345,Desktop2,Desktop,Ubuntu 20.04,Lenovo,ThinkCentre M720q,789123456,Intel Core i3,8GB,500GB HDD,Realtek PCIe GbE Family Controller,Google Chrome, Mozilla Firefox,05/05/24,Michael Wilson,Toronto
+PQR678,Server2,Server,Windows Server 2016,Dell EMC,PowerEdge R740,234567890,Intel Xeon Gold 6130,128GB,8TB HDD,Broadcom 57416 10GbE,Microsoft SQL Server, Apache Tomcat,30/09/22,Sarah Miller,Berlin
+STU901,Laptop3,Laptop,Windows 11,HP,Spectre x360,567890123,Intel Core i7,32GB,1TB SSD,Intel Wi-Fi 6 AX201,Microsoft Office, Adobe Acrobat,12/07/23,Daniel Lee,Tokyo
+VWX234,Desktop3,Desktop,macOS Catalina,Apple,iMac (27-inch 2020),901234567,Intel Core i9,64GB,2TB SSD,Wi-Fi 5,Google Chrome, Mozilla Firefox,25/11/24,Olivia Clark,Paris
+YZA567,Server3,Server,CentOS 7,HPE,ProLiant DL380 Gen10,345678901,Intel Xeon Silver 4210,256GB,16TB HDD,HPE Ethernet 1Gb 4-port FLR,Microsoft SQL Server, Apache Tomcat,18/02/26,Liam Taylor,Mumbai
+BCD890,Laptop4,Laptop,Windows 10,Lenovo,ThinkPad X1 Carbon,678901234,Intel Core i5,16GB,512GB SSD,Intel Wi-Fi 6 AX201,Microsoft Office, Adobe Acrobat,31/12/22,Ava Garcia,Shanghai
