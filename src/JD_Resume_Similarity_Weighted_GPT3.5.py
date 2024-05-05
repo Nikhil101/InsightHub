@@ -5,7 +5,7 @@ import re
 import openai
 
 # Access the OPENAI_API_KEY
-openai.api_key = "sk-proj-hjjWnDwm6Oc4pMCug5uET3BlbkFJrPJGXsHajtjRoKFB0E6z"
+openai.api_key = ""
 tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 model = AutoModel.from_pretrained('bert-base-uncased')
 
