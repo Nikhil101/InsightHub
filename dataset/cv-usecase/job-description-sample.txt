@@ -1,0 +1,1 @@
+Role: Develop, test, and maintain software applications. | Skills: Proficiency in Python, Java; experience with databases; familiarity with Agile methodologies. | Experience: Minimum 3 years in software development. | Education: Bachelor’s degree in Computer Science or related field.
