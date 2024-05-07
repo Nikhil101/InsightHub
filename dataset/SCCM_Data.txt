@@ -1,0 +1,7 @@
+Device Name,Operating System,Processor,RAM,Storage,Location,Cost
+Vivek-Laptop, Microsoft 12, Intel 7, 16GB,1TB,New York,1000
+Nikhil-Desktop, Microsoft 10, Intel 9, 8GB,1TB,Sydney,2000
+Vivek-Smartphone, Microsoft NT, Intel 7, 16GB,1TB,Pune,1500
+Omi-Desktop, Microsoft 10, Intel 9, 8GB,1TB,London,2500
+Atul-Laptop, Microsoft 12, Intel 7, 4GB,1TB,New York,5000
+Vikas-Desktop, Microsoft 10, Intel 9, 32GB,1TB,Sydney,2000

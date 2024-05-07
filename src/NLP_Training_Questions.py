@@ -56,7 +56,12 @@ if __name__ == "__main__":
     file_path = '../dataset/SCCM_Data.txt'  # Adjust this to your file path
     data = load_and_clean_data(file_path)
 
-    # Example query
-    query = "Give me devices in Sydney?"
-    result = answer_query(query, data)
-    print("Answer:", result)
+    while True:
+        user_query = input("Enter your query (or type 'exit' to quit): ")
+        if user_query.lower() == "exit":
+            break
+
+        # Example query
+        #query = "Give me devices with operating system as Microsoft 10?"
+        result = answer_query(user_query, data)
+        print("Answer:", result)

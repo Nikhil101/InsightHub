@@ -17,11 +17,11 @@ def read_file(file_path):
         return file.read()
 
 
-def call_open_api(prompt, description):
+def call_open_api(prompt,token_value):
     response = openai.Completion.create(
         model="gpt-3.5-turbo-instruct",
-        prompt=f"{prompt}:{description}",
-        max_tokens=256,
+        prompt=f"{prompt}",
+        max_tokens=token_value,
         temperature=0.7
     )
 
@@ -51,7 +51,7 @@ def embed_text(text, pooling='mean'):
         raise ValueError("Unsupported pooling strategy")
 
 
-def expand_skills(description):
+def expand_skills(resume_name,description):
     prompt = f""" From now on, you are Artemis, a recruitment specialist working for top consulting firms (Deloitte, 
     EnY, KPMG, PWC). Generate a structured list of skills and related technologies based on the provided input.
     Please analyze the following skills: {description} 
@@ -63,25 +63,40 @@ def expand_skills(description):
     - Programming Languages: Python - Explicit
     - Databases: SQL - Inferred
     - Programming Languages: Java - Inferred """
-    response = call_open_api(prompt, description)
-    print("this is in expand\n", response)
+    response = call_open_api(prompt,256)
+    print("this is in expand for candidate : ",resume_name, response)
     return response
 
 
-def infer_related_knowledge(text):
+def infer_skills_and_experience_knowledge(resume_name,skills, experience):
     prompt = f""" From now on, you are Artemis, a recruitment specialist working for top consulting firms (Deloitte, 
-    EnY, KPMG, PWC). Generate a structured list of skills and related technologies based on the provided input.
-    Please analyze the following skills: {text} 
-    Analyze these above mentioned skills and define categories based on their relationships and relevance to each other. 
-    The output should be formatted as a clear list, where each line contains a category, skill, and its corresponding 
-    inference type. Do not add an unnecessary spaces. Strictly follow the format given here: 
-    - <Category>: <Skill> - Explicit/Inferred
-    Here's some example:
-    - Programming Languages: Python - Explicit
-    - Databases: SQL - Inferred
-    - Programming Languages: Java - Inferred """
-    response = call_open_api(prompt, text)
-    print("this is in infer\n", response)
+    EnY, KPMG, PWC). 
+    Here's the skills of the candidate I have from the resume : {skills}
+    Here's the experience I have from the same resume : {experience}
+    
+    1.With text coming in "Experience from resume" create a context to identify which industry this experience can
+    belongs to. 
+    2.With text coming in "Skills" create a context to identify which industry these skills can be best used in.
+    3.Do this to identify boundary condition when comparing skills with experience. Example "A skill 
+    which seems completely not related to experience needs to removed from consideration"
+    4. Analyse the given skills and experience based on context created in point 1 and point 2 to find relevance. 
+    4.1 Example of absolute false comparison -- "a. A sales representative generally will not have IT related skills like python.
+    b. An IT Professional will not have skill related to mechanical engineering"
+    4.2 Example of absolute best comparison -- "a. A digital marketing experience will have skills like Digital Marketing, SEO, Google Analytics, Content Creation, Strategic Planning" 
+    
+    Now, identify based on this analyses that you've carried, give me a relatable score between 0 to 1 where 
+    if you find skills to experience not relevant then give score between 0.0000 to 0.2000 
+    if you find skills to experience strongly relevant then give score between 0.7000 to 1.0000 
+    
+    
+    The output should always be formatted as a single decimal number with maximum 4 decimal places and no new lines or spaces.
+
+    Here's a example of the output format I am expecting: 0.4543 """
+    print("\n")
+    print("This is the prompt for candidate : ", resume_name)
+    print(" ", prompt)
+    response = call_open_api(prompt,256)
+    print("this is in infer_skills_and_experience_knowledge for candidate : ", resume_name, response)
     return response
 
 
@@ -117,35 +132,44 @@ def parse_resume_name(text):
 
 
 def compare_sections(jd_sections, resumes_sections, pooling='mean'):
-    """Compares sections of JD and multiple resumes using Euclidean distance, with binary scoring for must-have
-    skills. """
+    """Compares sections of JD and multiple resumes using Euclidean distance, then normalizes the scores."""
     results = {}
-    # Step 4.2 - Give call to open api for getting relevant skills mentioned in job description
-    jd_skills_expanded = expand_skills(jd_sections['Skills'])
-    for resume_name, sections in resumes_sections.items():
-        # Step 4.1 - Give call to open api for getting relevant skills mentioned in resume
-        resume_skills_inferred = infer_related_knowledge(sections['Skills'])
+    min_distance = float('inf')
+    max_distance = float('-inf')
 
-        # Step 4.2 - Now we check for common skills between job description and resume
-        #skill_match = jd_skills_expanded.lower() in resume_skills_inferred.lower()
-        skill_match = True
-        # Step 4.3 - Now we find similarity based on embeddings. We use euclidean_distances here
-        if skill_match:
-            jd_embedding = embed_text(jd_skills_expanded, pooling)
-            resume_embedding = embed_text(resume_skills_inferred, pooling)
-            skill_distance = euclidean_distances([jd_embedding], [resume_embedding])[0][0]
-            total_distance = skill_distance  # Start with skill distance
-            print("Total distance : ", total_distance)
-            for section in ['Experience', 'Education']:
-                if jd_sections[section] and sections[section]:
-                    section_embedding = embed_text(jd_sections[section], pooling)
-                    resume_embedding = embed_text(sections[section], pooling)
-                    distance = euclidean_distances([section_embedding], [resume_embedding])[0][0]
-                    total_distance += distance
-            results[resume_name] = total_distance
+    # First, calculate distances for all resumes and find min/max distances
+    jd_skills_expanded = expand_skills("JobDescription",jd_sections['Skills'])
+    for resume_name, sections in resumes_sections.items():
+        resume_skills_expanded = expand_skills(resume_name,sections['Skills'])
+        jd_embedding = embed_text(jd_skills_expanded, pooling)
+        resume_embedding = embed_text(resume_skills_expanded, pooling)
+        skill_distance = euclidean_distances([jd_embedding], [resume_embedding])[0][0]
+        total_distance = skill_distance
+        results[resume_name] = total_distance
+        # Update min and max distances found
+        if total_distance < min_distance:
+            min_distance = total_distance
+        if total_distance > max_distance:
+            max_distance = total_distance
+    # Normalize distances based on the min/max found
+    normalized_scores = {}
+    for resume_name, distance in results.items():
+        if distance == float('inf'):
+            normalized_scores[resume_name] = 0.0  # Assign 0 if skills didn't match at all
         else:
-            results[resume_name] = float('inf')  # Penalize heavily if must-have skills are missing
-    return results
+            # Normalize such that closer distances score higher (closer to 1)
+            normalized_scores[resume_name] = 1 - (distance - min_distance) / (
+                        max_distance - min_distance) if max_distance != min_distance else 1.0
+    skill_experience_relatability_score = {}
+    final_normalised_score = {}
+    for resume_name, sections in resumes_sections.items():
+        skill_experience_relatability_score[resume_name] = float(infer_skills_and_experience_knowledge(resume_name, sections['Skills'],
+                                                                                                 sections['Experience']))
+        #Below formula defines the skills vs experience weightage to be 20% and other score which is job description vs skill to be 80%
+        skill_experience_relatability_score[resume_name] = (skill_experience_relatability_score[resume_name]*0.2) + (normalized_scores[resume_name]*0.8)
+
+        #final_normalised_score[resume_name] = skill_experience_relatability_score[resume_name] / 2
+    return skill_experience_relatability_score
 
 
 def get_input_from_user():
@@ -172,9 +196,11 @@ def get_input_from_files(job_description_path, resumes_directory):
     job_description_input = read_file(job_description_path)
     jd_sections_from_files = parse_sections(job_description_input)
 
-    # Get a list of all files in the resumes directory
-    resume_files = os.listdir(resumes_directory)
+    # Get a list of all files in the resumes directory ensuring that only text files are read from the given
+    # directory and not from subdirectories
+    resume_files = [file for file in os.listdir(resumes_directory) if os.path.isfile(os.path.join(resumes_directory, file)) and file.endswith('.txt')]
     resume_paths = [os.path.join(resumes_directory, file) for file in resume_files]
+
 
     # Determine the number of resumes based on the number of files in resume_paths
     num_resumes = len(resume_paths)
@@ -186,8 +212,8 @@ def get_input_from_files(job_description_path, resumes_directory):
         resume_input = read_file(resume_path)
         resume_name = parse_resume_name(resume_input)
         resumes_sections_from_files[resume_name] = parse_sections(resume_input)
-    #print("Here are the jd sections from files \n", jd_sections_from_files)
-    #print("Here are the resume sections from files \n", resumes_sections_from_files)
+    # print("Here are the jd sections from files \n", jd_sections_from_files)
+    # print("Here are the resume sections from files \n", resumes_sections_from_files)
     return jd_sections_from_files, resumes_sections_from_files
 
 
