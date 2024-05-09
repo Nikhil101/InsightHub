@@ -1,6 +1,7 @@
 import os
 
 import torch
+from openai import OpenAI
 from transformers import AutoTokenizer, AutoModel
 from sklearn.metrics.pairwise import euclidean_distances
 import re
@@ -10,7 +11,10 @@ import openai
 openai.api_key = ""
 tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 model = AutoModel.from_pretrained('bert-base-uncased')
-
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key=openai.api_key,
+)
 
 def read_file(file_path):
     with open(file_path, 'r') as file:
@@ -18,15 +22,27 @@ def read_file(file_path):
 
 
 def call_open_api(prompt,token_value):
-    response = openai.Completion.create(
+    response = client.completions.create(
         model="gpt-3.5-turbo-instruct",
         prompt=f"{prompt}",
         max_tokens=token_value,
-        temperature=0.7
+        temperature=0.1
     )
 
     return response.choices[0].text.strip()
 
+def call_new_open_api(prompt,token_value):
+    response = client.chat.completions.create(
+        model="gpt-4-turbo-preview",
+        messages=[{
+           "role": "user",
+            "content": f"{prompt}"
+        }],
+        max_tokens=token_value,
+        temperature=0.1
+    )
+
+    return response.choices[0].message.content.strip()
 
 def clean_text(text):
     """Preprocesses the text by removing new lines and multiple spaces."""
@@ -63,7 +79,10 @@ def expand_skills(resume_name,description):
     - Programming Languages: Python - Explicit
     - Databases: SQL - Inferred
     - Programming Languages: Java - Inferred """
-    response = call_open_api(prompt,256)
+    if model_type == '1':
+        response = call_open_api(prompt,256)
+    elif model_type == '2':
+        response = call_new_open_api(prompt,256)
     print("this is in expand for candidate : ",resume_name, response)
     return response
 
@@ -95,7 +114,10 @@ def infer_skills_and_experience_knowledge(resume_name,skills, experience):
     print("\n")
     print("This is the prompt for candidate : ", resume_name)
     print(" ", prompt)
-    response = call_open_api(prompt,256)
+    if model_type == '1':
+        response = call_open_api(prompt,256)
+    elif model_type == '2':
+        response = call_new_open_api(prompt,256)
     print("this is in infer_skills_and_experience_knowledge for candidate : ", resume_name, response)
     return response
 
@@ -233,7 +255,14 @@ if __name__ == "__main__":
 
     if jd_sections and resumes_sections:
         # Step 4 - Compare the sections of job description with resumes
+        pooling_methods = ["mean", "max", "cls"]
+        valid_model_types = ["1", "2"]
         pooling_method = input("Enter pooling method (mean, max, cls): ")
+        if pooling_method not in pooling_methods:
+            raise ValueError("Invalid pooling method. Please enter 'mean', 'max', or 'cls'.")
+        model_type = input("Provide Model Type? (1 - GPT 3, 2 - GPT 4): ")
+        if model_type not in valid_model_types:
+            raise ValueError("Invalid model type. Please enter '1' for GPT 3 or '2' for GPT 4.")
         similarities = compare_sections(jd_sections, resumes_sections, pooling=pooling_method)
 
         # Step 5 - Give the matching result
